@@ -87,7 +87,7 @@ func process(p wikiparse.Parser) {
     pages := int64(0)
     start := time.Now()
     prev := start
-    reportfreq := int64(1000)
+    reportfreq := int64(10000)
     var err error
     for {
         var page *wikiparse.Page
