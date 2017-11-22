@@ -1,0 +1,5 @@
+theme: jekyll-theme-merlot
+title: "Wikipedia To GeoJson"
+description: "Extract geodata from wikipedia in JSON format"
+show_downloads: false
+google_analytics: UA-63812845-4
