@@ -1,6 +1,8 @@
 # Extract geojson coordinates from wikipedia files
 
-Wikipedia2geojson reads wikipedia files and prints out geo locations.  It can read compressed files, and compressed streams.
+Wikipedia2geojson reads wikipedia files and prints out geo locations.  
+
+It can read compressed files, and compressed streams.
 
 # Example
 
