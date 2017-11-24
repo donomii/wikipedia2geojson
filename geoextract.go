@@ -175,23 +175,8 @@ func processMultiStream(idx, data string) {
     process(p)
 }
 
-func main() {
-    var cpus int
-    flag.IntVar(&numWorkers, "workers", 8, "Number of parsing workers")
-    flag.IntVar(&cpus, "cpus", runtime.GOMAXPROCS(0), "Number of CPUS to utilize")
-    flag.StringVar(&compression, "compression", "", "Input is compressed with bz2 or gz")
-    flag.Parse()
-    parseCoords = true
-
-    runtime.GOMAXPROCS(cpus)
-
-    switch flag.NArg() {
-    case 1:
-        processSingleStream(flag.Arg(0))
-    case 2:
-        processMultiStream(flag.Arg(0), flag.Arg(1))
-    default:
-        log.Fatalf(`
+func helpMessage() string {
+	return `
 Use:
 		
 	wikipedia2geojson.exe file.xml
@@ -232,6 +217,30 @@ Use:
 	wikipedia2geojson.exe --compression=gz -
 	
 		Read from stdin.  Stdin is in gz format
-	`)
+	`
+	}
+
+func main() {
+    var cpus int
+	var wantHelp bool
+    flag.IntVar(&numWorkers, "workers", 8, "Number of parsing workers")
+    flag.IntVar(&cpus, "cpus", runtime.GOMAXPROCS(0), "Number of CPUS to utilize")
+    flag.StringVar(&compression, "compression", "", "Input is compressed with bz2 or gz")
+	flag.BoolVar(&wantHelp, "help", false, "Print help")
+    flag.Parse()
+    parseCoords = true
+
+	if wantHelp {
+	log.Fatalf(helpMessage())
+	}
+    runtime.GOMAXPROCS(cpus)
+
+    switch flag.NArg() {
+    case 1:
+        processSingleStream(flag.Arg(0))
+    case 2:
+        processMultiStream(flag.Arg(0), flag.Arg(1))
+    default:
+        log.Fatalf(helpMessage())
     }
 }
