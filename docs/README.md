@@ -22,7 +22,11 @@ Because w2j can read compressed streams, you can proces network files on the fly
 
     wget -q -O - http://someserver.com/enwiki-pages-articles2.xml.bz2 | wikipedia2geojson --compression=bz2 -
 
+# Installation
 
+        go get -u github.com/donomii/wikipedia2geojson
+      
+# More examples
 
 
         wikipedia2geojson.exe file.xml
