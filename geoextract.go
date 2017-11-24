@@ -3,6 +3,8 @@ package main
 
 import (
     "compress/bzip2"
+	"compress/gzip"
+	
     "encoding/gob"
     "encoding/xml"
     "flag"
@@ -12,11 +14,15 @@ import (
     "runtime"
     "sync"
     "time"
+	"bufio"
+	"strings"
+	"io"
 
     "github.com/dustin/go-humanize"
     "github.com/dustin/go-wikiparse"
 )
 
+var compression string
 var numWorkers int
 var parseCoords bool
 
@@ -73,6 +79,10 @@ func errorHandler(ch <-chan *wikiparse.Page) {
 func process(p wikiparse.Parser) {
     log.Printf("Got site info:  %+v", p.SiteInfo())
 
+	
+	fmt.Println("[")
+	
+	
     ch := make(chan *wikiparse.Page, 1000)
     cherr := make(chan *wikiparse.Page, 10)
 
@@ -111,20 +121,45 @@ func process(p wikiparse.Parser) {
     close(cherr)
     errwg.Wait()
     d := time.Since(start)
+	fmt.Println("]")
     log.Printf("Ended with err after %v:  %v after %s pages (%.2f p/s)",
         d, err, humanize.Comma(pages), float64(pages)/d.Seconds())
 }
 
+//Opens a file or stdin (if filename is "-").  Can open compressed files
+func OpenInput (filename string, compression string) io.Reader {
+    var f *os.File
+	var err error
+	
+	var inReader io.Reader
+	if filename == "-" {
+		f = os.Stdin
+	} else {
+		f, err = os.Open(filename)
+		if err != nil {
+			log.Fatalf("Error opening file: %v", err)
+		}
+		//defer f.Close()
+	}
+	
+	inReader = bufio.NewReader(f)
+	
+	
+	if (strings.HasSuffix(filename, "gz") || compression == "gz") && (!strings.HasSuffix(filename, "bz2")) {
+		inReader, err = gzip.NewReader(f)
+	}
+	
+	if strings.HasSuffix(filename, "bz2") || compression == "bz2" {
+		 inReader = bzip2.NewReader(f)
+	}
+	
+	
+	return inReader
+}
+
 func processSingleStream(filename string) {
-    f, err := os.Open(filename)
-    if err != nil {
-        log.Fatalf("Error opening file: %v", err)
-    }
-    defer f.Close()
 
-    z := bzip2.NewReader(f)
-
-    p, err := wikiparse.NewParser(z)
+    p, err := wikiparse.NewParser(OpenInput(filename, compression))
     if err != nil {
         log.Fatalf("Error setting up new page parser:  %v", err)
     }
@@ -144,8 +179,7 @@ func main() {
     var cpus int
     flag.IntVar(&numWorkers, "workers", 8, "Number of parsing workers")
     flag.IntVar(&cpus, "cpus", runtime.GOMAXPROCS(0), "Number of CPUS to utilize")
-    flag.BoolVar(&parseCoords, "parseCoords", false,
-        "Try to parse geo data while traversing")
+    flag.StringVar(&compression, "compression", "", "Input is compressed with bz2 or gz")
     flag.Parse()
     parseCoords = true
 
@@ -157,6 +191,47 @@ func main() {
     case 2:
         processMultiStream(flag.Arg(0), flag.Arg(1))
     default:
-        log.Fatalf("Need either a single stream dump, or index and multi-stream")
+        log.Fatalf(`
+Use:
+		
+	wikipedia2geojson.exe file.xml
+	
+		Read from file.xml
+
+		
+	wikipedia2geojson.exe file.xml.bz2
+	
+		Read from file.xml.bz2, automatically uncompressing bz2 format
+
+		
+	wikipedia2geojson.exe file.xml.gz
+	
+		Read from file.xml.bz2, automatically uncompressing gz format
+
+		
+	wikipedia2geojson.exe --compression=bz2 file
+	
+		Read from file, force uncompressing bz2 format
+
+		
+	wikipedia2geojson.exe --compression=gz file
+	
+		Read from file, force uncompressing gz format
+
+		
+	wikipedia2geojson.exe -
+	
+		Read from stdin.
+
+		
+	wikipedia2geojson.exe --compression=bz2 -
+	
+		Read from stdin.  Stdin is in bzip2 format
+	
+	
+	wikipedia2geojson.exe --compression=gz -
+	
+		Read from stdin.  Stdin is in gz format
+	`)
     }
 }
