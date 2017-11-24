@@ -20,7 +20,7 @@ Each location is on its own line, so you can pipe this stream into grep and othe
 
 # Streaming
 
-Because w2j can read compressed streams, you can proces network files on the fly.  You don't need to download them completely first.
+Because w2j can read compressed streams, you can process network files on the fly.  You don't need to download them completely first.
 
     wget -q -O - http://someserver.com/enwiki-pages-articles2.xml.bz2 | wikipedia2geojson --compression=bz2 -
 
@@ -78,5 +78,11 @@ So this won't work
 
     wget -q -O - http://someserver.com/enwiki-pages-articles2.xml.bz2 | wikipedia2geojson.exe --compression=bz2 -
 
+# Bonus
 
+A perl one liner to unpack the wikipedia geodata files in sql format
+
+    type enwiki-20171103-geo_tags.sql | perl -pe "s/\),\(/\r\n/g" | perl -ne "@c=split/,/;if($c[8]ne'NULL'){print '{ \"type\": \"Feature\", \"geometry\": { \"type\": \"Point\", \"coordinates\": [ '.$c[4].', '.$c[5].' ] }, \"properties\": { \"name\": '.$c[8].' } };'.\"\n\";}"
+    
+Wikipedia's geodata extraction appears to have trouble identifying points, so wikipedia2geojson will be useful for a bit longer yet.
 
