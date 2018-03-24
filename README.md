@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/donomii/wikipedia2geojson.svg?branch=master)](https://travis-ci.org/donomii/wikipedia2geojson)
+[![GoDoc](https://godoc.org/github.com/donomii/wikipedia2geojson?status.svg)](https://godoc.org/github.com/donomii/wikipedia2geojson)
+
 # Extract geojson coordinates from wikipedia files
 
 Wikipedia2geojson reads wikipedia files and prints out geo locations.  
