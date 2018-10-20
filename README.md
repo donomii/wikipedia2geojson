@@ -23,7 +23,7 @@ Each location is on its own line, so you can pipe this stream into grep and othe
 
 # Streaming
 
-Because w2j can read compressed streams, you can process network files on the fly.  You don't need to download them completely first.
+Because w2g can read compressed streams, you can process network files on the fly.  You don't need to download them completely first.
 
     wget -q -O - http://someserver.com/enwiki-pages-articles2.xml.bz2 | wikipedia2geojson --compression=bz2 -
 
