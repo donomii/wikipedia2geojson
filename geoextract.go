@@ -1,4 +1,4 @@
-// Sample program that finds all the geo data in wikipedia pages.
+// Extract geodata from wikipedia pages.
 package main
 
 import (
