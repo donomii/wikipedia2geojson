@@ -81,6 +81,10 @@ So this won't work
 
     wget -q -O - http://someserver.com/enwiki-pages-articles2.xml.bz2 | wikipedia2geojson.exe --compression=bz2 -
 
+
+
+W2g does not print out fully compliant geojson.  Instead of printing an array of points, it just prints the points. To change the output into fully compliant geojson, add [ ] brackets around the entire file.
+
 # Bonus
 
 A perl one liner to unpack the wikipedia geodata files in sql format
