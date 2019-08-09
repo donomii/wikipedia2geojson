@@ -90,6 +90,8 @@ W2g does not print out fully compliant geojson.  Instead of printing an array of
 A perl one liner to unpack the wikipedia geodata files in sql format
 
     type enwiki-20171103-geo_tags.sql | perl -pe "s/\),\(/\r\n/g" | perl -ne "@c=split/,/;if($c[8]ne'NULL'){print '{ \"type\": \"Feature\", \"geometry\": { \"type\": \"Point\", \"coordinates\": [ '.$c[4].', '.$c[5].' ] }, \"properties\": { \"name\": '.$c[8].' } };'.\"\n\";}"
-    
+
+    cat enwiki-20190501-geo_tags.sql | perl -pe "s/\),\(/\n/g" | perl -ne '@c=split/,/;if($c[8]ne"NULL"){print "{ \"type\": \"Feature\", \"geometry\": { \"type\": \"Point\", \"coordinates\": [ ".$c[4].", ".$c[5]." ] }, \"properties\": { \"name\": \".$c[8].\" } }"."\n";}'
+
 Wikipedia's geodata extraction appears to have trouble identifying points, so wikipedia2geojson will be useful for a bit longer yet.
 
