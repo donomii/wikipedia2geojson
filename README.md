@@ -27,6 +27,7 @@ Because w2g can read compressed streams, you can process network files on the fl
     wget -q -O - http://someserver.com/enwiki-pages-articles2.xml.bz2 | wikipedia2geojson --compression=bz2 -
 	
 e.g. from the wikipedia download site (don't do this, it's better to download the file once and use it)
+
 		wget -q -O - https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles1.xml-p10p30302.bz2 | ./wikipedia2geojson --compression=bz2 --strict -
 
 # Installation
