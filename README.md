@@ -1,5 +1,4 @@
 [![Build Status](https://travis-ci.org/donomii/wikipedia2geojson.svg?branch=master)](https://travis-ci.org/donomii/wikipedia2geojson)
-[![GoDoc](https://godoc.org/github.com/donomii/wikipedia2geojson?status.svg)](https://godoc.org/github.com/donomii/wikipedia2geojson)
 
 # Extract geojson coordinates from wikipedia files
 
@@ -19,17 +18,21 @@ Reads from file.xml.bz2, automatically uncompressing bz2 format
     { "type": "Feature", "geometry": { "type": "Point", "coordinates": [ -150, 64 ] }, "properties": { "name": ""Alaska"" } }
     { "type": "Feature", "geometry": { "type": "Point", "coordinates": [ 19, 13 ] }, "properties": { "name": ""Apollo 11"" } }
     
-Each location is on its own line, so you can pipe this stream into grep and other command line programs.  
+Each location is on its own line, so you can pipe this stream into grep and other command line programs.  Add the --strict flag if you want completely correct geojson format.
 
 # Streaming
 
 Because w2g can read compressed streams, you can process network files on the fly.  You don't need to download them completely first.
 
     wget -q -O - http://someserver.com/enwiki-pages-articles2.xml.bz2 | wikipedia2geojson --compression=bz2 -
+	
+e.g. from the wikipedia download site (don't do this, it's better to download the file once and use it)
+		wget -q -O - https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles1.xml-p10p30302.bz2 | ./wikipedia2geojson --compression=bz2 --strict -
 
 # Installation
 
         go get -u github.com/donomii/wikipedia2geojson
+		go install github.com/donomii/wikipedia2geojson
       
 # More examples
 
@@ -83,7 +86,7 @@ So this won't work
 
 
 
-W2g does not print out fully compliant geojson.  Instead of printing an array of points, it just prints the points. To change the output into fully compliant geojson, add [ ] brackets around the entire file.
+W2g does not print out fully compliant geojson.  Instead of printing an array of points, it just prints the points. To change the output into fully compliant geojson, add the --strict flag to the command line.
 
 # Bonus
 
