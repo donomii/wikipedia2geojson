@@ -2,21 +2,17 @@
 package main
 
 import (
-	"compress/bzip2"
-	"compress/gzip"
-
-	"bufio"
 	"encoding/gob"
 	"encoding/xml"
 	"flag"
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"runtime"
-	"strings"
 	"sync"
 	"time"
+
+	"github.com/donomii/goof"
 
 	"github.com/dustin/go-humanize"
 	"github.com/dustin/go-wikiparse"
@@ -133,38 +129,9 @@ func process(p wikiparse.Parser) {
 		d, err, humanize.Comma(pages), float64(pages)/d.Seconds())
 }
 
-//Opens a file or stdin (if filename is "-").  Can open compressed files
-func OpenInput(filename string, compression string) io.Reader {
-	var f *os.File
-	var err error
-
-	var inReader io.Reader
-	if filename == "-" {
-		f = os.Stdin
-	} else {
-		f, err = os.Open(filename)
-		if err != nil {
-			log.Fatalf("Error opening file: %v", err)
-		}
-		//defer f.Close()
-	}
-
-	inReader = bufio.NewReader(f)
-
-	if (strings.HasSuffix(filename, "gz") || compression == "gz") && (!strings.HasSuffix(filename, "bz2")) {
-		inReader, err = gzip.NewReader(f)
-	}
-
-	if strings.HasSuffix(filename, "bz2") || compression == "bz2" {
-		inReader = bzip2.NewReader(f)
-	}
-
-	return inReader
-}
-
 func processSingleStream(filename string) {
 
-	p, err := wikiparse.NewParser(OpenInput(filename, compression))
+	p, err := wikiparse.NewParser(goof.OpenInput(filename, compression))
 	if err != nil {
 		log.Fatalf("Error setting up new page parser:  %v", err)
 	}
@@ -240,11 +207,16 @@ func main() {
 		log.Fatalf(helpMessage())
 	}
 
+	inputFile := flag.Arg(0)
+
+	if inputFile == "-" {
+		inputFile = ""
+	}
 	switch flag.NArg() {
 	case 1:
-		processSingleStream(flag.Arg(0))
+		processSingleStream(inputFile)
 	case 2:
-		processMultiStream(flag.Arg(0), flag.Arg(1))
+		processMultiStream(inputFile, flag.Arg(1))
 	default:
 		log.Fatalf(helpMessage())
 	}
