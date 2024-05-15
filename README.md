@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/donomii/wikipedia2geojson.svg?branch=master)](https://travis-ci.org/donomii/wikipedia2geojson)
+This project has moved to my [geotools project](https://github.com/donomii/geotools/tree/master/wikipedia2geojson)
 
 # Extract geojson coordinates from wikipedia files
 
